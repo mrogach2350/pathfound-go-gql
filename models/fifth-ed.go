@@ -71,3 +71,36 @@ type Recipe struct {
 	HasFluff       bool     `json:"hasFluff"`
 	HasFluffImages bool     `json:"hasFluffImages"`
 }
+
+type ItemJson struct {
+	Items      []Item `json:"item"`
+	ItemGroups []Item `json:"itemGroup"`
+}
+
+type Item struct {
+	Name          string `json:"name"`
+	Source        string `json:"source"`
+	Page          int    `json:"page"`
+	Rarity        string `json:"rarity"`
+	ReqAttune     string `json:"reqAttune"`
+	ReqAttuneTags []struct {
+		Class string `json:"class"`
+	} `json:"reqAttuneTags"`
+	Wondrous         bool     `json:"wondrous"`
+	BonusSpellAttack string   `json:"bonusSpellAttack"`
+	BonusSpellSaveDc string   `json:"bonusSpellSaveDc"`
+	Focus            []string `json:"focus"`
+	Entries          []string `json:"entries"`
+}
+
+type ItemGroup struct {
+	Name      string        `json:"name"`
+	Source    string        `json:"source"`
+	Page      int           `json:"page"`
+	Rarity    string        `json:"rarity"`
+	ReqAttune bool          `json:"reqAttune"`
+	Wondrous  bool          `json:"wondrous"`
+	Tattoo    bool          `json:"tattoo"`
+	Entries   []interface{} `json:"entries"`
+	Items     []string      `json:"items"`
+}

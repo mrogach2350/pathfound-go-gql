@@ -3,6 +3,8 @@ module github.com/mrogach2350/pathfound_go
 go 1.17
 
 require (
+	cloud.google.com/go/firestore v1.5.0
+	firebase.google.com/go v3.13.0+incompatible
 	firebase.google.com/go/v4 v4.7.1
 	github.com/gin-contrib/cors v1.3.1
 	github.com/gin-gonic/gin v1.7.7
@@ -10,7 +12,6 @@ require (
 
 require (
 	cloud.google.com/go v0.75.0 // indirect
-	cloud.google.com/go/firestore v1.5.0 // indirect
 	cloud.google.com/go/storage v1.10.0 // indirect
 	github.com/gin-contrib/sse v0.1.0 // indirect
 	github.com/go-playground/locales v0.13.0 // indirect

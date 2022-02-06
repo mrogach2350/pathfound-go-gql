@@ -19,16 +19,18 @@ type PathfinderHandler struct {
 	Races       []models.Race
 }
 
+var _ IHandler = &PathfinderHandler{}
+
 func (h *PathfinderHandler) BindData(localDataPtr *bool) {
 	if *localDataPtr {
-		helpers.BindLocalData(models.WeaponsUri, &h.Weapons)
-		helpers.BindLocalData(models.ArmorUri, &h.Armor)
-		helpers.BindLocalData(models.SpellsUri, &h.Spells)
-		helpers.BindLocalData(models.CasterTypesUri, &h.CasterTypes)
-		helpers.BindLocalData(models.FeatsUri, &h.Feats)
-		helpers.BindLocalData(models.MagicItemsUri, &h.MagicItems)
-		helpers.BindLocalData(models.MonstersUri, &h.Monsters)
-		helpers.BindLocalData(models.RacesUri, &h.Races)
+		helpers.BindLocalData(models.LocalPathfinderUrl+models.WeaponsUri, &h.Weapons)
+		helpers.BindLocalData(models.LocalPathfinderUrl+models.ArmorUri, &h.Armor)
+		helpers.BindLocalData(models.LocalPathfinderUrl+models.SpellsUri, &h.Spells)
+		helpers.BindLocalData(models.LocalPathfinderUrl+models.CasterTypesUri, &h.CasterTypes)
+		helpers.BindLocalData(models.LocalPathfinderUrl+models.FeatsUri, &h.Feats)
+		helpers.BindLocalData(models.LocalPathfinderUrl+models.MagicItemsUri, &h.MagicItems)
+		helpers.BindLocalData(models.LocalPathfinderUrl+models.MonstersUri, &h.Monsters)
+		helpers.BindLocalData(models.LocalPathfinderUrl+models.RacesUri, &h.Races)
 	} else {
 		helpers.BindCloudData(models.WeaponsUri, &h.Weapons)
 		helpers.BindCloudData(models.ArmorUri, &h.Armor)

@@ -17,11 +17,9 @@ const (
 	BaseFifthEditionUrl  = ""
 	LocalFifthEditionUrl = "./data/5e-data/"
 	MagicVariantUri      = "magicvariants.json"
-	VariantKey           = "variant"
 	PsionicUri           = "psionics.json"
-	PsionicKey           = "psionic"
 	RecipeUri            = "recipes.json"
-	RecipeKey            = "recipe"
+	ItemsUri             = "items.json"
 )
 
 var PathfinderTypes = map[string]bool{

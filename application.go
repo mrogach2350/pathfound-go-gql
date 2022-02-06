@@ -1,21 +1,24 @@
 package main
 
 import (
-	firebase "firebase.google.com/go/v4"
+	"context"
 	"flag"
-	"github.com/gin-contrib/cors"
-	"github.com/gin-gonic/gin"
-	"github.com/mrogach2350/pathfound_go/handlers"
 	"log"
 	"net/http"
 	"strings"
+
+	firebase "firebase.google.com/go"
+	"firebase.google.com/go/auth"
+	"github.com/gin-contrib/cors"
+	"github.com/gin-gonic/gin"
+	"github.com/mrogach2350/pathfound_go/handlers"
 )
 
 type AuthHeader struct {
 	Authorization string `header:"Authorization"`
 }
 
-func MyJwtMiddleware(app *firebase.App) gin.HandlerFunc {
+func MyJwtMiddleware(client *auth.Client) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		h := AuthHeader{}
 		err := c.BindHeader(&h)
@@ -29,11 +32,6 @@ func MyJwtMiddleware(app *firebase.App) gin.HandlerFunc {
 			c.Abort()
 		}
 		idToken := splitToken[1]
-
-		client, err := app.Auth(c)
-		if err != nil {
-			log.Fatalf("error getting Auth client: %v\n", err)
-		}
 
 		_, err = client.VerifyIDToken(c, idToken)
 		if err != nil {
@@ -56,26 +54,38 @@ func main() {
 	config.AllowCredentials = true
 	config.AddAllowHeaders("Authorization")
 	r.Use(cors.New(config))
-
 	api := r.Group("/api")
-	pathfinderEndpoints := api.Group("/pathfinder")
-	fifthedEndpoints := api.Group("/fifthed")
 
-	//app, err := firebase.NewApp(context.Background(), nil)
+	ctx := context.Background()
+	app, err := firebase.NewApp(ctx, nil)
+	if err != nil {
+		log.Fatalf("error initializing app: %v\n", err)
+	}
+	authClient, err := app.Auth(ctx)
+	if err != nil {
+		log.Fatalf("error initializing app: %v\n", err)
+	}
+	// if !*localDataPtr {
+	r.Use(MyJwtMiddleware(authClient))
+	// }
+	//
+	//firestoreClient, err := app.Firestore(ctx)
 	//if err != nil {
 	//	log.Fatalf("error initializing app: %v\n", err)
 	//}
-	//r.Use(MyJwtMiddleware(app))
+	//fbHandler := handlers.FirebaseHandler{C: firestoreClient}
+	//fbHandler.Test()
 
 	pfHandler := handlers.PathfinderHandler{}
 	pfHandler.BindData(localDataPtr)
-
-	feHandler := handlers.FifthEdHandler{}
-	feHandler.BindData()
-
+	pathfinderEndpoints := api.Group("/pathfinder")
 	pathfinderEndpoints.GET("/:type", pfHandler.GetAllRecordsHandler)
 	pathfinderEndpoints.GET("/:type/:id", pfHandler.GetRecordByIdHandler)
 
+	feHandler := handlers.FifthEdHandler{}
+	feHandler.BindData(localDataPtr)
+	fifthedEndpoints := api.Group("/fifthed")
 	fifthedEndpoints.GET("/:type", feHandler.GetAllRecordsHandler)
+
 	r.Run()
 }

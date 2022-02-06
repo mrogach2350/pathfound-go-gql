@@ -12,12 +12,16 @@ type FifthEdHandler struct {
 	MagicVariantsJson models.MagicVariantJson
 	PsionicsJson      models.PsionicJson
 	RecipesJson       models.RecipeJson
+	ItemsJson         models.ItemJson
 }
 
-func (h *FifthEdHandler) BindData() {
-	helpers.BindLocalData(models.MagicVariantUri, &h.MagicVariantsJson)
-	helpers.BindLocalData(models.PsionicUri, &h.PsionicsJson)
-	helpers.BindLocalData(models.RecipeUri, &h.RecipesJson)
+var _ IHandler = &FifthEdHandler{}
+
+func (h *FifthEdHandler) BindData(_ *bool) {
+	helpers.BindLocalData(models.LocalFifthEditionUrl+models.MagicVariantUri, &h.MagicVariantsJson)
+	helpers.BindLocalData(models.LocalFifthEditionUrl+models.PsionicUri, &h.PsionicsJson)
+	helpers.BindLocalData(models.LocalFifthEditionUrl+models.RecipeUri, &h.RecipesJson)
+	helpers.BindLocalData(models.LocalFifthEditionUrl+models.ItemsUri, &h.ItemsJson)
 }
 
 func (h *FifthEdHandler) GetAllRecordsHandler(c *gin.Context) {
@@ -31,6 +35,10 @@ func (h *FifthEdHandler) GetAllRecordsHandler(c *gin.Context) {
 			c.JSON(http.StatusOK, gin.H{"psionics": h.PsionicsJson.Psionics[start:end]})
 		case "recipes":
 			c.JSON(http.StatusOK, gin.H{"recipes": h.RecipesJson.Recipes[start:end]})
+		case "items":
+			c.JSON(http.StatusOK, gin.H{"recipes": h.ItemsJson.Items[start:end]})
+		case "item-groups":
+			c.JSON(http.StatusOK, gin.H{"recipes": h.ItemsJson.ItemGroups[start:end]})
 		default:
 			fmt.Printf("no matching case for %s\n", entityType)
 			c.JSON(http.StatusNotFound, gin.H{"message": fmt.Sprintf("can not find data for %s", entityType)})

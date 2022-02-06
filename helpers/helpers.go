@@ -8,25 +8,16 @@ import (
 	"io/ioutil"
 	"net/http"
 	"os"
-	"reflect"
 	"strconv"
 )
 
-func BindLocalData(uri string, i interface{}) {
-	var url string
-	typeString := reflect.TypeOf(i).String()
-	if models.PathfinderTypes[typeString] {
-		url = models.LocalPathfinderUrl
-	}
-	if models.FifthEdTypes[typeString] {
-		url = models.LocalFifthEditionUrl
-	}
-	file, err := os.Open(url + uri)
+func BindLocalData(fullUrl string, i interface{}) {
+	file, err := os.Open(fullUrl)
 	if err != nil {
 		fmt.Println(err)
 		return
 	}
-	fmt.Printf("Successfully Opened Local %s \n", uri)
+	fmt.Printf("Successfully Opened Local %s \n", fullUrl)
 	defer file.Close()
 	byteValue, _ := ioutil.ReadAll(file)
 	json.Unmarshal(byteValue, i)
