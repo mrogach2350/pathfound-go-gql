@@ -1,0 +1,58 @@
+# GraphQL schema example
+#
+# https://gqlgen.com/getting-started/
+
+type Weapon {
+    name: String
+    description: String
+    weight: String
+    price: String
+    proficiency: String
+    weaponClass: String
+    damageType: String
+    source: String
+    special: String
+    dmgT: String
+    dmgS: String
+    dmgM: String
+    dmgL: String
+    critical: String
+}
+
+type Armor {
+    name: String
+    description: String
+    weight: String
+    price: String
+    source: String
+    armorCheckPenalty: String
+    maxDexBonus: String
+    arcaneSpellFailure: String
+    armorType: String
+    armorBonus: String
+    speed20Ft: String
+    speed30fFt: String
+}
+
+type Group {
+    name: String
+    players: [String]
+    admins: [String]
+    dm: String
+}
+
+type Query {
+    weapons: [Weapon]
+    weapon(input: Int): Weapon
+    armors: [Armor]
+    armor(input: Int): Armor
+    groups: [Group]
+}
+
+input NewGroup {
+    name: String
+}
+
+type Mutation {
+    createGroup(input: NewGroup): Group
+}
