@@ -1,13 +1,15 @@
 package main
 
 import (
-	"context"
 	"flag"
+	"github.com/99designs/gqlgen/graphql/handler"
+	"github.com/99designs/gqlgen/graphql/playground"
+	"github.com/mrogach2350/pathfound_go/graph"
+	"github.com/mrogach2350/pathfound_go/graph/generated"
 	"log"
 	"net/http"
 	"strings"
 
-	firebase "firebase.google.com/go"
 	"firebase.google.com/go/auth"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
@@ -43,6 +45,26 @@ func MyJwtMiddleware(client *auth.Client) gin.HandlerFunc {
 	}
 }
 
+// Defining the Graphql handler
+func GraphqlHandler() gin.HandlerFunc {
+	// NewExecutableSchema and Config are in the generated.go file
+	// Resolver is in the resolver.go file
+	h := handler.NewDefaultServer(generated.NewExecutableSchema(generated.Config{Resolvers: &graph.Resolver{}}))
+
+	return func(c *gin.Context) {
+		h.ServeHTTP(c.Writer, c.Request)
+	}
+}
+
+// Defining the Playground handler
+func PlaygroundHandler() gin.HandlerFunc {
+	h := playground.Handler("GraphQL", "/query")
+
+	return func(c *gin.Context) {
+		h.ServeHTTP(c.Writer, c.Request)
+	}
+}
+
 // run this command every session
 // export GOOGLE_APPLICATION_CREDENTIALS=/Users/mrogach/Code/pathfound/pathfound_go/pathfound-go-firebase-adminsdk-uvyop-3f7ba6d110.json
 func main() {
@@ -56,17 +78,17 @@ func main() {
 	r.Use(cors.New(config))
 	api := r.Group("/api")
 
-	ctx := context.Background()
-	app, err := firebase.NewApp(ctx, nil)
-	if err != nil {
-		log.Fatalf("error initializing app: %v\n", err)
-	}
-	authClient, err := app.Auth(ctx)
-	if err != nil {
-		log.Fatalf("error initializing app: %v\n", err)
-	}
+	//ctx := context.Background()
+	//app, err := firebase.NewApp(ctx, nil)
+	//if err != nil {
+	//	log.Fatalf("error initializing app: %v\n", err)
+	//}
+	//authClient, err := app.Auth(ctx)
+	//if err != nil {
+	//	log.Fatalf("error initializing app: %v\n", err)
+	//}
 	// if !*localDataPtr {
-	r.Use(MyJwtMiddleware(authClient))
+	//r.Use(MyJwtMiddleware(authClient))
 	// }
 	//
 	//firestoreClient, err := app.Firestore(ctx)
@@ -86,6 +108,9 @@ func main() {
 	feHandler.BindData(localDataPtr)
 	fifthedEndpoints := api.Group("/fifthed")
 	fifthedEndpoints.GET("/:type", feHandler.GetAllRecordsHandler)
+
+	r.POST("/query", GraphqlHandler())
+	r.GET("/", PlaygroundHandler())
 
 	r.Run()
 }
