@@ -5,7 +5,9 @@ package graph
 
 import (
 	"context"
+	"errors"
 	"fmt"
+
 	"github.com/mrogach2350/pathfound_go/graph/generated"
 	"github.com/mrogach2350/pathfound_go/graph/model"
 	"github.com/mrogach2350/pathfound_go/helpers"
@@ -13,7 +15,7 @@ import (
 )
 
 func (r *mutationResolver) CreateGroup(ctx context.Context, input *model.NewGroup) (*models.Group, error) {
-	panic(fmt.Errorf("not implemented"))
+	return &models.Group{Name: *input.Name}, nil
 }
 
 func (r *queryResolver) Weapons(ctx context.Context) ([]*models.Weapon, error) {
@@ -21,8 +23,13 @@ func (r *queryResolver) Weapons(ctx context.Context) ([]*models.Weapon, error) {
 	return weapons, nil
 }
 
-func (r *queryResolver) Weapon(ctx context.Context, input *string) (*models.Weapon, error) {
-	panic(fmt.Errorf("not implemented"))
+func (r *queryResolver) Weapon(ctx context.Context, input *int) (*models.Weapon, error) {
+	weapons := helpers.GetWeapons()
+	idx := *input - 1
+	if idx >= 0 && idx < len(weapons) {
+		return weapons[idx], nil
+	}
+	return nil, errors.New("index is out of bounds")
 }
 
 func (r *queryResolver) Armors(ctx context.Context) ([]*models.Armor, error) {
@@ -30,8 +37,13 @@ func (r *queryResolver) Armors(ctx context.Context) ([]*models.Armor, error) {
 	return armor, nil
 }
 
-func (r *queryResolver) Armor(ctx context.Context, input *string) (*models.Armor, error) {
-	panic(fmt.Errorf("not implemented"))
+func (r *queryResolver) Armor(ctx context.Context, input *int) (*models.Armor, error) {
+	armor := helpers.GetArmor()
+	idx := *input - 1
+	if idx >= 0 && idx < len(armor) {
+		return armor[idx], nil
+	}
+	return nil, errors.New("index is out of bounds")
 }
 
 func (r *queryResolver) Groups(ctx context.Context) ([]*models.Group, error) {
@@ -42,11 +54,7 @@ func (r *queryResolver) Groups(ctx context.Context) ([]*models.Group, error) {
 func (r *Resolver) Mutation() generated.MutationResolver { return &mutationResolver{r} }
 
 // Query returns generated.QueryResolver implementation.
-func (r *Resolver) Query() generated.QueryResolver {
-	return &queryResolver{r}
-}
+func (r *Resolver) Query() generated.QueryResolver { return &queryResolver{r} }
 
 type mutationResolver struct{ *Resolver }
-type queryResolver struct {
-	*Resolver
-}
+type queryResolver struct{ *Resolver }

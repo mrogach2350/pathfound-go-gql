@@ -70,10 +70,10 @@ type ComplexityRoot struct {
 	}
 
 	Query struct {
-		Armor   func(childComplexity int, input *string) int
+		Armor   func(childComplexity int, input *int) int
 		Armors  func(childComplexity int) int
 		Groups  func(childComplexity int) int
-		Weapon  func(childComplexity int, input *string) int
+		Weapon  func(childComplexity int, input *int) int
 		Weapons func(childComplexity int) int
 	}
 
@@ -100,9 +100,9 @@ type MutationResolver interface {
 }
 type QueryResolver interface {
 	Weapons(ctx context.Context) ([]*models.Weapon, error)
-	Weapon(ctx context.Context, input *string) (*models.Weapon, error)
+	Weapon(ctx context.Context, input *int) (*models.Weapon, error)
 	Armors(ctx context.Context) ([]*models.Armor, error)
-	Armor(ctx context.Context, input *string) (*models.Armor, error)
+	Armor(ctx context.Context, input *int) (*models.Armor, error)
 	Groups(ctx context.Context) ([]*models.Group, error)
 }
 
@@ -255,7 +255,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Query.Armor(childComplexity, args["input"].(*string)), true
+		return e.complexity.Query.Armor(childComplexity, args["input"].(*int)), true
 
 	case "Query.armors":
 		if e.complexity.Query.Armors == nil {
@@ -281,7 +281,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Query.Weapon(childComplexity, args["input"].(*string)), true
+		return e.complexity.Query.Weapon(childComplexity, args["input"].(*int)), true
 
 	case "Query.weapons":
 		if e.complexity.Query.Weapons == nil {
@@ -497,9 +497,9 @@ type Group {
 
 type Query {
     weapons: [Weapon]
-    weapon(input: String): Weapon
+    weapon(input: Int): Weapon
     armors: [Armor]
-    armor(input: String): Armor
+    armor(input: Int): Armor
     groups: [Group]
 }
 
@@ -551,10 +551,10 @@ func (ec *executionContext) field_Query___type_args(ctx context.Context, rawArgs
 func (ec *executionContext) field_Query_armor_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
-	var arg0 *string
+	var arg0 *int
 	if tmp, ok := rawArgs["input"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
-		arg0, err = ec.unmarshalOString2ᚖstring(ctx, tmp)
+		arg0, err = ec.unmarshalOInt2ᚖint(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -566,10 +566,10 @@ func (ec *executionContext) field_Query_armor_args(ctx context.Context, rawArgs 
 func (ec *executionContext) field_Query_weapon_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
-	var arg0 *string
+	var arg0 *int
 	if tmp, ok := rawArgs["input"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
-		arg0, err = ec.unmarshalOString2ᚖstring(ctx, tmp)
+		arg0, err = ec.unmarshalOInt2ᚖint(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -1224,7 +1224,7 @@ func (ec *executionContext) _Query_weapon(ctx context.Context, field graphql.Col
 	fc.Args = args
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().Weapon(rctx, args["input"].(*string))
+		return ec.resolvers.Query().Weapon(rctx, args["input"].(*int))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -1295,7 +1295,7 @@ func (ec *executionContext) _Query_armor(ctx context.Context, field graphql.Coll
 	fc.Args = args
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().Armor(rctx, args["input"].(*string))
+		return ec.resolvers.Query().Armor(rctx, args["input"].(*int))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -4279,6 +4279,22 @@ func (ec *executionContext) marshalOGroup2ᚖgithubᚗcomᚋmrogach2350ᚋpathfo
 		return graphql.Null
 	}
 	return ec._Group(ctx, sel, v)
+}
+
+func (ec *executionContext) unmarshalOInt2ᚖint(ctx context.Context, v interface{}) (*int, error) {
+	if v == nil {
+		return nil, nil
+	}
+	res, err := graphql.UnmarshalInt(v)
+	return &res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalOInt2ᚖint(ctx context.Context, sel ast.SelectionSet, v *int) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	res := graphql.MarshalInt(*v)
+	return res
 }
 
 func (ec *executionContext) unmarshalONewGroup2ᚖgithubᚗcomᚋmrogach2350ᚋpathfound_goᚋgraphᚋmodelᚐNewGroup(ctx context.Context, v interface{}) (*model.NewGroup, error) {

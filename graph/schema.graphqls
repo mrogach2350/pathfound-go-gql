@@ -43,9 +43,9 @@ type Group {
 
 type Query {
     weapons: [Weapon]
-    weapon(input: String): Weapon
+    weapon(input: Int): Weapon
     armors: [Armor]
-    armor(input: String): Armor
+    armor(input: Int): Armor
     groups: [Group]
 }
 
